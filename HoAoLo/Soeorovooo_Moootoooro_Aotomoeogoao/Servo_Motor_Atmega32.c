@@ -6,13 +6,13 @@
  */ 
 
 #include "Servo_Motor_Atmega32.h"
-
-ISR(TIMER0_OVF_vect){
-
-	TIMER0_Stop();
+////////////////////////////////////////////////////////////////
+ISR(TIMER0_OVF_vect)
+{
+	//TIMER0_Stop();
 	TIMER0_Set_TIMER0_COUNTER_REGISTER_Val(6);
 }
-
+////////////////////////////////////////////////////////////////
 void Servo_Motor_Init(void)
 {	
 	SET_BIT(Servo_Motor_Direction_Port,Servo_Motor_Pin);
@@ -25,15 +25,10 @@ void Servo_Motor_Init(void)
 	STRUCT_V_G_T0_config.U8_TIMER0_COMPARE_OUTPUT_REGISTER_value=55;// by default OCR is on 0 degree ON from count 6 to count 55(392 us)
 	
 	TIMER0_Init(STRUCT_V_G_T0_config);
-	
 	return;
 }
-	
-		/*****************************************************************************************************/
-		/******************** PWM ON PERIOD MIN 1000us(1ms) AND MAXIMUM 2000us(2MS) **************************/
-		/*****************************************************************************************************/
-
-void Servo_Motor_Rotate_In_Degrees(INT8U Num_of_Degrees)	//e.g. Servo_Motor_Rotate_In_Degrees(num_of_degrees,direction);
+////////////////////////////////////////////////////////////////
+void Servo_Motor_Rotate_In_Degrees(INT32U Num_of_Degrees)	//e.g. Servo_Motor_Rotate_In_Degrees(num_of_degrees,direction);
 {	
 	if(Num_of_Degrees<=0)//55-6=49				49*8 us = 392 us for 0 degrees
 	{
@@ -92,6 +87,21 @@ void Servo_Motor_Rotate_In_Degrees(INT8U Num_of_Degrees)	//e.g. Servo_Motor_Rota
 		TIMER0_Set_TIMER0_COMPARE_OUTPUT_REGISTER_Val( (Num_of_Degrees*123/178) + 127);// other degrees from 1 to 179 degrees  this equation will be evaluated and has error of +5%
 	}
 	TIMER0_Start();
-
 	return;	
+}
+////////////////////////////////////////////////////////////////
+void Servo_Motor_Get_Angle_From_Uart(void)
+{
+	INT8U Angle_Read=0;
+	INT8U Angle_In_Ascii[5];
+	INT8U buffer[4];
+	
+	USART_Transmit_String("Servo_Motor_Communication: Please, Enter the desired Motor Angle in Degrees! \n\r");
+	USART_Receive_String(Angle_In_Ascii);
+	Angle_Read = (INT8U)atoi(Angle_In_Ascii);
+	USART_Transmit_String("\n\r");
+	USART_Transmit_String( itoa(Angle_Read,buffer,10));
+	USART_Transmit_String("\n\r");
+	
+	Servo_Motor_Rotate_In_Degrees(Angle_Read);
 }
