@@ -5,15 +5,14 @@
  *  Author: mohanad1
  */ 
 #include "Timer0.h"
-
-/*This Function Sets and initialize mode of operation and compare output mode and initial values of Timer0 --Counter Register and Output Compare Register--*/
-void TIMER0_Init(timer0_configuration_struct STRUCT_V_G_T0_config){	
-	/*
-	if (STRUCT_V_G_T0_config.pwm_mode == 1)//T0_PWM_MODE = 1//The FOC0 bit is only active when the WAVEFORM_GENERATION_MODE_BIT_ZERO bit specifies a non-PWM mode.
-	{
-		CLEAR_BIT(TIMER0_CONTROL_REGISTER,FOC0);//FOC0 must be set to zero when TIMER0_CONTROL_REGISTER is written when operating in PWM mode.
-	}
-	*/
+////////////////////////////////////////////////////////////////
+void TIMER0_Init(timer0_configuration_struct STRUCT_V_G_T0_config)	/*This Function Sets and initialize mode of operation and compare out. mode and initial values of Timer0/Counter0 Register & Output Compare Reg.*/
+{
+		//The FOC0 bit is only active when the WAVEFORM_GENERATION_MODE_BIT_ZERO bit specifies a non-PWM mode.
+		/*	if (STRUCT_V_G_T0_config.pwm_mode == 1)//T0_PWM_MODE = 1
+			{
+				CLEAR_BIT(TIMER0_CONTROL_REGISTER,FOC0);	//FOC0 must be set to zero when TIMER0_CONTROL_REGISTER is written when operating in PWM mode.
+			}	*/
 	TIMER0_Reset();
 	switch(STRUCT_V_G_T0_config.mode_of_operation)
 	{
@@ -21,17 +20,14 @@ void TIMER0_Init(timer0_configuration_struct STRUCT_V_G_T0_config){
 			CLEAR_BIT(TIMER0_CONTROL_REGISTER,WAVEFORM_GENERATION_MODE_BIT_ZERO);//0
 			CLEAR_BIT(TIMER0_CONTROL_REGISTER,WAVEFORM_GENERATION_MODE_BIT_ONE);//0			
 			break;
-			
 		case T0_PHASE_CORRECT_PWM_MODE://T0_PHASE_CORRECT_PWM_MODE=1
 			CLEAR_BIT(TIMER0_CONTROL_REGISTER,WAVEFORM_GENERATION_MODE_BIT_ONE);//0
 			SET_BIT(TIMER0_CONTROL_REGISTER,WAVEFORM_GENERATION_MODE_BIT_ZERO);//1
 			break;
-			
 		case T0_CLEAR_TIMER_ON_COMPARE_MATCH_MODE://T0_CLEAR_TIMER_ON_COMPARE_MATCH_MODE=2
 			SET_BIT(TIMER0_CONTROL_REGISTER,WAVEFORM_GENERATION_MODE_BIT_ONE);//1
 			CLEAR_BIT(TIMER0_CONTROL_REGISTER,WAVEFORM_GENERATION_MODE_BIT_ZERO);//0
 			break;
-			
 		case T0_FAST_PWM_MODE://T0_FAST_PWM_MODE=3
 			SET_BIT(TIMER0_CONTROL_REGISTER,WAVEFORM_GENERATION_MODE_BIT_ONE);//1
 			SET_BIT(TIMER0_CONTROL_REGISTER,WAVEFORM_GENERATION_MODE_BIT_ZERO);//1
@@ -43,17 +39,14 @@ void TIMER0_Init(timer0_configuration_struct STRUCT_V_G_T0_config){
 			CLEAR_BIT(TIMER0_CONTROL_REGISTER,COMPARE_OUTPUT_MODE_BIT_ONE);//0
 			CLEAR_BIT(TIMER0_CONTROL_REGISTER,COMPARE_OUTPUT_MODE_BIT_ZERO);//0
 			break;
-			
 		case T0_TOGGLE_OC0://T0_TOGGLE_OC0=1
 			CLEAR_BIT(TIMER0_CONTROL_REGISTER,COMPARE_OUTPUT_MODE_BIT_ONE);//0
 			SET_BIT(TIMER0_CONTROL_REGISTER,COMPARE_OUTPUT_MODE_BIT_ZERO);//1
 			break;
-			
 		case T0_CLEAR_OC0://T0_CLEAR_OC0=2
 			SET_BIT(TIMER0_CONTROL_REGISTER,COMPARE_OUTPUT_MODE_BIT_ONE);//1
 			CLEAR_BIT(TIMER0_CONTROL_REGISTER,COMPARE_OUTPUT_MODE_BIT_ZERO);//0
 			break;
-			
 		case T0_SET_OC0://T0_SET_OC0=3
 			SET_BIT(TIMER0_CONTROL_REGISTER,COMPARE_OUTPUT_MODE_BIT_ONE);//1
 			SET_BIT(TIMER0_CONTROL_REGISTER,COMPARE_OUTPUT_MODE_BIT_ZERO);//1
@@ -61,7 +54,6 @@ void TIMER0_Init(timer0_configuration_struct STRUCT_V_G_T0_config){
 	}
 	TIMER0_COUNTER_REGISTER=STRUCT_V_G_T0_config.U8_TIMER0_COUNTER_REGISTER_value;
 	TIMER0_COMPARE_OUTPUT_REGISTER=STRUCT_V_G_T0_config.U8_TIMER0_COMPARE_OUTPUT_REGISTER_value;	
-	
 	switch (STRUCT_V_G_T0_config.interrupt_mode)
 	{
 		case T0_INTERRUPT_OVF:
@@ -77,9 +69,9 @@ void TIMER0_Init(timer0_configuration_struct STRUCT_V_G_T0_config){
 	}
 	return;
 }
-
-/*This Function Sets/Starts the counter-clock source and continue counting after stop*/
-void TIMER0_Start(void){		
+//////////////////////////////////////////////////////////////////////
+void TIMER0_Start(void)	/*This Function Sets/Starts the counter-clock source and continue counting after stop*/
+{		
 	switch (STRUCT_V_G_T0_config.clock_select)
 	{
 		case T0_NO_CLOCK_SOURCE://T0_NO_CLOCK_SOURCE = 0
@@ -125,25 +117,24 @@ void TIMER0_Start(void){
 	}	
 	return;
 }
-
-/*This Function stops the counter from counting till further notice holding its current state --No Clock Source applied--*/
-void TIMER0_Stop(void){		
+//////////////////////////////////////////////////////////////////////
+void TIMER0_Stop(void)	/*This Function stops the counter from counting till further notice holding its current state --No Clock Source applied--*/
+{		
 	CLEAR_BIT(TIMER0_CONTROL_REGISTER,TIMER0_CLOCK_SELECT_BIT_TWO);	//0
 	CLEAR_BIT(TIMER0_CONTROL_REGISTER,TIMER0_CLOCK_SELECT_BIT_ONE);	//0
 	CLEAR_BIT(TIMER0_CONTROL_REGISTER,TIMER0_CLOCK_SELECT_BIT_ZERO);	//0 no clock source
 	return;
 }
-
-/*This Function clears the counter to its initial  TIMER0_COUNTER_REGISTER and TIMER0_COMPARE_OUTPUT_REGISTER Values*/
-void TIMER0_Clear(void){	
-	
+//////////////////////////////////////////////////////////////////////
+void TIMER0_Clear(void)	/*This Function clears the counter to its initial  TIMER0_COUNTER_REGISTER and TIMER0_COMPARE_OUTPUT_REGISTER Values*/
+{		
 	TIMER0_COUNTER_REGISTER=STRUCT_V_G_T0_config.U8_TIMER0_COUNTER_REGISTER_value;
 	TIMER0_COMPARE_OUTPUT_REGISTER=STRUCT_V_G_T0_config.U8_TIMER0_COMPARE_OUTPUT_REGISTER_value;
 	return;	
 }
-
-/*This Function resets the timer0 module registers and flags to its reset Values*/
-void TIMER0_Reset(void){
+//////////////////////////////////////////////////////////////////////
+void TIMER0_Reset(void)	/*This Function resets the timer0 module registers and flags to its reset Values*/
+{
 	CLEAR_BIT(TIMER0_CONTROL_REGISTER,TIMER0_CLOCK_SELECT_BIT_ZERO);	//0 no clk
 	CLEAR_BIT(TIMER0_CONTROL_REGISTER,TIMER0_CLOCK_SELECT_BIT_ONE);	//0
 	CLEAR_BIT(TIMER0_CONTROL_REGISTER,TIMER0_CLOCK_SELECT_BIT_TWO);	//0
@@ -158,10 +149,11 @@ void TIMER0_Reset(void){
 	TIMER0_COMPARE_OUTPUT_REGISTER=0x00;
 	return;
 }
-
+//////////////////////////////////////////////////////////////////////
 /*This function sets Pre-scaler to achieve the desired time per ovf given on condition counting from 0 to 255 --the full range of TIMER0_COUNTER_REGISTER--*/
 /*
-void TIMER0_Time_To_OVF(double t_ovf){		
+void TIMER0_Time_To_OVF(double t_ovf)
+{		
 	double time_per_tick=0;
 	INT8U number_of_ticks=0;
 	time_per_tick= (STRUCT_V_G_T0_config.clock_select)/F_CPU;//if F_CPU = 8M --> 1/8(0.125us), 8/8(1us), 64/8(8us), 256/8(32us), 1024/8(128us)
@@ -177,37 +169,43 @@ void TIMER0_Time_To_OVF(double t_ovf){
 return;	
 }
 */
-
-/*This function Set a new value to the  timer0  Output Compare Register*/
-void TIMER0_Set_TIMER0_COMPARE_OUTPUT_REGISTER_Val(INT8U val){
+//////////////////////////////////////////////////////////////////////
+void TIMER0_Set_TIMER0_COMPARE_OUTPUT_REGISTER_Val(INT8U val)	/*This function Set a new value to the  timer0  Output Compare Register*/
+{
 	STRUCT_V_G_T0_config.U8_TIMER0_COMPARE_OUTPUT_REGISTER_value=val;
 	TIMER0_COMPARE_OUTPUT_REGISTER= STRUCT_V_G_T0_config.U8_TIMER0_COMPARE_OUTPUT_REGISTER_value;
 	return;
 }
-void TIMER0_Set_TIMER0_COUNTER_REGISTER_Val(INT8U val){
+//////////////////////////////////////////////////////////////////////
+void TIMER0_Set_TIMER0_COUNTER_REGISTER_Val(INT8U val)
+{
 	STRUCT_V_G_T0_config.U8_TIMER0_COUNTER_REGISTER_value=val;
 	TIMER0_COUNTER_REGISTER= STRUCT_V_G_T0_config.U8_TIMER0_COUNTER_REGISTER_value;
 	return;
 }
-/*This function enable timer0 overflow interrupt*/
-void TIMER0_Enable_OVF_INT(){
+//////////////////////////////////////////////////////////////////////
+void TIMER0_Enable_OVF_INT()	/*This function enable timer0 overflow interrupt*/
+{
 SET_BIT(TIMER0_INTERRUPT_MASK_REGISTER,TIMER0_OVERFLOW_INTERRUPT);//timer0/counter0 overflow interrupt enabled	
 return;
 }
-
-/*This function enable timer0 output compare match interrupt*/
-void TIMER0_Enable_OCR_INT(){
+//////////////////////////////////////////////////////////////////////
+void TIMER0_Enable_OCR_INT()	/*This function enable timer0 output compare match interrupt*/
+{
 	SET_BIT(TIMER0_INTERRUPT_MASK_REGISTER,TIMER0_COMPARE_INTERRUPT);//timer0/counter0 output compare match interrupt enabled
 	return;
 }
-
-/*This function disable timer0 overflow interrupt*/
-void TIMER0_Disable_OVF_INT(){
+//////////////////////////////////////////////////////////////////////
+void TIMER0_Disable_OVF_INT()	/*This function disable timer0 overflow interrupt*/
+{
 	CLEAR_BIT(TIMER0_INTERRUPT_MASK_REGISTER,TIMER0_COMPARE_INTERRUPT);//timer0/counter0 output compare match interrupt disabled
 	return;
 }
+//////////////////////////////////////////////////////////////////////
 /*This function disable timer0 output compare match interrupt*/
-void TIMER0_Disable_OCR_INT(){
+void TIMER0_Disable_OCR_INT()
+{
 	CLEAR_BIT(TIMER0_INTERRUPT_MASK_REGISTER,TIMER0_OVERFLOW_INTERRUPT);//timer0/counter0 output compare match interrupt disabled
 	return;
 }
+//////////////////////////////////////////////////////////////////////
