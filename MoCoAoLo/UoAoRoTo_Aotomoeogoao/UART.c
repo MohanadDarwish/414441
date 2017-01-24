@@ -104,6 +104,7 @@ void USART_Init(config_struct uart_config_struct)
 			break;
 	}
 	/*
+	//uncommenting this switch result in malfunction of the driver with atmega32
 	switch(uart_config_struct.interrupt_mode_select)
 	{
 		case uart_Receive_Complete_Interrupt_Enable:
