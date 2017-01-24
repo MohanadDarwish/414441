@@ -2,16 +2,18 @@
  * UART.c
  *
  * Created: 04/01/2017 03:14:29 م
- *  Author: DELL
+ *  Author: Mohanad Darwish
  */ 
 
 #include "UART.h"
 
-
-void USART_Init(config_struct uart_config_struct){
+void USART_Init(config_struct uart_config_struct)
+{
 	INT16U UBRR;	// 2 bytes 
+	SET_BIT(USART_CONTROL_REGISTER_C, USART_REGISTER_SELECT);//needed in atmega32 to write on Control register C and reserved bit in Atmega128
 	//mode select UMSEL bit =0 for Async in UCSRmC
-	switch(uart_config_struct.operation_mode){
+	switch(uart_config_struct.operation_mode)
+	{
 		case synch:
 			SET_BIT( USART_CONTROL_REGISTER_C , USART_MODE_SELECT );		//1
 			break;
@@ -37,7 +39,8 @@ void USART_Init(config_struct uart_config_struct){
 	}
 	
 	//set parity mode
-	switch (uart_config_struct.parity_mode){
+	switch (uart_config_struct.parity_mode)
+	{
 		case no_parity:
 			CLEAR_BIT(USART_CONTROL_REGISTER_C,USART_PARITY_MODE_ONE);//USART_PARITY_MODE_ONE =0
 			CLEAR_BIT(USART_CONTROL_REGISTER_C,USART_PARITY_MODE_ZERO);//USART_PARITY_MODE_ZERO =0
@@ -51,9 +54,9 @@ void USART_Init(config_struct uart_config_struct){
 			SET_BIT(USART_CONTROL_REGISTER_C,USART_PARITY_MODE_ZERO);	//USART_PARITY_MODE_ZERO =1
 			break;
 	}
-	
 	//set stop bit number 1 or 2
-	switch (uart_config_struct.stop_bits_select){
+	switch (uart_config_struct.stop_bits_select)
+	{
 		case one_stop_bit:
 			CLEAR_BIT(USART_CONTROL_REGISTER_C ,USART_STOP_BIT);	//USART_STOP_BIT =0	(1-bit)
 			break;
@@ -71,7 +74,7 @@ void USART_Init(config_struct uart_config_struct){
 		case ch_6_bits:	
 			CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_CHARACTER_SIZE_BIT_TWO);	//0
 			CLEAR_BIT(USART_CONTROL_REGISTER_C,USART_CHARACTER_SIZE_BIT_ONE);	//0
-			SET_BIT(USART_CONTROL_REGISTER_C,USART_CHARACTER_SIZE_BIT_ZERO);		//1
+			SET_BIT(USART_CONTROL_REGISTER_C,USART_CHARACTER_SIZE_BIT_ZERO);	//1
 			break;
 		case ch_7_bits:	
 			CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_CHARACTER_SIZE_BIT_TWO);	//0
@@ -81,24 +84,26 @@ void USART_Init(config_struct uart_config_struct){
 		case ch_8_bits:	
 			CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_CHARACTER_SIZE_BIT_TWO);	//0
 			SET_BIT(USART_CONTROL_REGISTER_C,USART_CHARACTER_SIZE_BIT_ONE);		//1
-			SET_BIT(USART_CONTROL_REGISTER_C,USART_CHARACTER_SIZE_BIT_ZERO);		//1
+			SET_BIT(USART_CONTROL_REGISTER_C,USART_CHARACTER_SIZE_BIT_ZERO);	//1
 			break;
 	}
 	//enable transmitter receiver 
-	switch(uart_config_struct.transmit_or_receive_enable){
+	switch(uart_config_struct.transmit_or_receive_enable)
+	{
 		case tx_only:
-			SET_BIT(USART_CONTROL_REGISTER_B,USART_TRANSMITTER_ENABLE);	//Tx Enabled
-			CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_RECEIVER_ENABLE);//Rx Disabled
+			SET_BIT(USART_CONTROL_REGISTER_B,USART_TRANSMITTER_ENABLE);		//Tx Enabled
+			CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_RECEIVER_ENABLE);		//Rx Disabled
 			break;
 		case rx_only:
-			CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_TRANSMITTER_ENABLE);//Tx Disabled
-			SET_BIT(USART_CONTROL_REGISTER_B,USART_RECEIVER_ENABLE);	//Rx Enabled
+			CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_TRANSMITTER_ENABLE);	//Tx Disabled
+			SET_BIT(USART_CONTROL_REGISTER_B,USART_RECEIVER_ENABLE);		//Rx Enabled
 			break;
 		case tx_and_rx:
-			SET_BIT(USART_CONTROL_REGISTER_B,USART_TRANSMITTER_ENABLE);//Tx Enabled
-			SET_BIT(USART_CONTROL_REGISTER_B,USART_RECEIVER_ENABLE);//Tx Disabled
+			SET_BIT(USART_CONTROL_REGISTER_B,USART_TRANSMITTER_ENABLE);		//Tx Enabled
+			SET_BIT(USART_CONTROL_REGISTER_B,USART_RECEIVER_ENABLE);		//Tx Disabled
 			break;
 	}
+	/*
 	switch(uart_config_struct.interrupt_mode_select)
 	{
 		case uart_Receive_Complete_Interrupt_Enable:
@@ -107,32 +112,34 @@ void USART_Init(config_struct uart_config_struct){
 			break;
 		case uart_Transmit_Complete_Interrupt_Enable:
 			CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_RECEIVER_INTERRUPT_ENABLE);	//disable	Rx
-			SET_BIT(USART_CONTROL_REGISTER_B,USART_TRASMITTER_INTERRUPT_ENABLE);		//enable	Tx
+			SET_BIT(USART_CONTROL_REGISTER_B,USART_TRASMITTER_INTERRUPT_ENABLE);	//enable	Tx
 			break;
 		case  uart_Tx_and_Rx_Complete_Interrupt_Enable:
 			SET_BIT(USART_CONTROL_REGISTER_B,USART_RECEIVER_INTERRUPT_ENABLE);		//enable	Rx
-			SET_BIT(USART_CONTROL_REGISTER_B,USART_TRASMITTER_INTERRUPT_ENABLE);		//enable	Tx
+			SET_BIT(USART_CONTROL_REGISTER_B,USART_TRASMITTER_INTERRUPT_ENABLE);	//enable	Tx
 			break;
 		default:
 			CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_RECEIVER_INTERRUPT_ENABLE);	//disable	Rx
 			CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_TRASMITTER_INTERRUPT_ENABLE);	//disable	Tx
 	}
+	*/
 	return;
 }
-//
-void USART_Transmit (INT8U data){
+///////////////////////////////////////////////////////////////
+void USART_Transmit (INT8U data)
+{
 	/****** if we try to clear transmit flag in atmega 32 , there will be data corruption or data will not be transmitted correctly *******/
 	//SET_BIT(USART_CONTROL_REGISTER_A,USART_TRANSMIT_COMPLETE);//to clear interrupt flag only --- (we clear the bit by setting it to 1 XOR)
 	
 	while( ! (USART_CONTROL_REGISTER_A & (1<<USART_DATA_REGISTER_FLAG)) );// polling for empty transmission buffer
 	USART_DATA_REGISTER=data;//put data into buffer
 	while(! (USART_CONTROL_REGISTER_A & (1<<USART_TRANSMIT_COMPLETE)) );//USART_TRANSMIT_COMPLETE: USART Transmit Complete flag
-	
 	//SET_BIT(USART_CONTROL_REGISTER_A,USART_TRANSMIT_COMPLETE);//to clear interrupt flag only --- (we clear the bit by setting it to 1 XOR)
 	return;
 }
-
-received_data_struct USART_Receive(void){
+////////////////////////////////////////////////////////////////
+received_data_struct USART_Receive(void)
+{	
 	while( !(USART_CONTROL_REGISTER_A &(1<<USART_RECEIVE_COMPLETE)) ); //polling on Receive complete flag
 	usart_recieved_data_struct.data=USART_DATA_REGISTER;
 	if ( ( (GET_BIT(USART_CONTROL_REGISTER_A,USART_FRAME_ERROR)) | (GET_BIT(USART_CONTROL_REGISTER_A,USART_PARITY_ERROR)) | (GET_BIT(USART_CONTROL_REGISTER_A,USART_DATA_OVERRUN)) )==0)
@@ -153,30 +160,37 @@ received_data_struct USART_Receive(void){
 		}
 	return usart_recieved_data_struct;
 }
-
-void USART_disable (){
+////////////////////////////////////////////////////////////////
+void USART_disable ()
+{
 	//disable the transmitter and the receiver in usart module 0
 	CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_RECEIVER_ENABLE);//Receive Disabled
 	CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_TRANSMITTER_ENABLE);//Transmit Disabled
 	return;
 }
+////////////////////////////////////////////////////////////////
 void USART_Receive_Complete_Interrupt_Enable(void)
 {
 	SET_BIT(USART_CONTROL_REGISTER_B,USART_RECEIVER_INTERRUPT_ENABLE);
 }
+////////////////////////////////////////////////////////////////
 void USART_Transmit_Complete_Interrupt_Enable(void)
 {
 	SET_BIT(USART_CONTROL_REGISTER_B,USART_TRASMITTER_INTERRUPT_ENABLE);
 }
+////////////////////////////////////////////////////////////////
 void USART_Receive_Complete_Interrupt_Disable(void)
 {
 	CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_RECEIVER_INTERRUPT_ENABLE);
 }
+////////////////////////////////////////////////////////////////
 void USART_Transmit_Complete_Interrupt_Disable(void)
 {
 	CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_TRASMITTER_INTERRUPT_ENABLE);
 }
-void USART_Transmit_String(char* str){
+////////////////////////////////////////////////////////////////
+void USART_Transmit_String(char* str)
+{
 	while (*str != '\0')
 	{
 		USART_Transmit(*str );
@@ -184,10 +198,16 @@ void USART_Transmit_String(char* str){
 	}
 	return;
 }
-void USART_Receive_String(char* str ){
+////////////////////////////////////////////////////////////////
+void USART_Receive_String(char* str )
+{
 	received_data_struct r;
 	do{
 		r=USART_Receive();
+		// added line to send error status if found
+			if( (r.error_type) != correct_data){
+				USART_Transmit_String("Error in Data received!\n\r");
+			}
 		*str=r.data;
 		str++;
 	}while(r.data != '#');
