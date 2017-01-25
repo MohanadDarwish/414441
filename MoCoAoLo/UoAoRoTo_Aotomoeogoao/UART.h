@@ -10,10 +10,13 @@
 ////////////////////////////////////////////////////////////////	
 	#define DBG_MODE 1
 	#if	DBG_MODE >0
-	#define DBG		USART_DBG_Trace_Control_Flow((INT8U*)__FUNCTION__)
+	#define DBG					USART_DBG_Trace_Control_Flow((INT8U*)__FUNCTION__)
+	#define DBG_MSG(MESSAGE)	USART_DBG_Print_Debug_Message((INT8U*)__FUNCTION__ , MESSAGE)
 	#else
-	#define DBG		;
+	#define DBG						;
+	#define DBG_MSG(MESSAGE)		;
 	#endif
+	
 ////////////////////////////////////////////////////////////////
 	#include <avr/io.h>
 	#include "STD_Data_Types.h"
