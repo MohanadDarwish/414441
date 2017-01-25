@@ -167,8 +167,9 @@
 	void USART_Transmit_Complete_Interrupt_Disable(void);
 	void USART_Transmit_String(INT8U* );
 	void USART_Receive_String(INT8U* );
-	void USART_DBG_Print_Debug_Message(INT8U*,INT8U*);
-	void USART_DBG_Trace_Control_Flow(INT8U*);
+
+	void USART_DBG_Print_Debug_Message(INT8U*,INT8U*); //This function used to print on UART-terminal the current control flow position(time+function name)+ a "message of your choice"... e.g. USART_DBG_Print_Debug_Message((INT8U*)__FUNCTION__,"debug message");
+	void USART_DBG_Trace_Control_Flow(INT8U*); //This function used to print on UART-terminal the current control flow position(time+function name).. e.g. USART_DBG_Trace_Control_Flow((INT8U*)__FUNCTION__);
 ////////////////////////////////////////////////////////////////
 
 #endif /* UART_H_ */
