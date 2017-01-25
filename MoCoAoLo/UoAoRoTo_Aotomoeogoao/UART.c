@@ -103,27 +103,25 @@ void USART_Init(config_struct uart_config_struct)
 			SET_BIT(USART_CONTROL_REGISTER_B,USART_RECEIVER_ENABLE);		//Tx Disabled
 			break;
 	}
-	/*
-	//uncommenting this switch result in malfunction of the driver with atmega32
-	switch(uart_config_struct.interrupt_mode_select)
-	{
-		case uart_Receive_Complete_Interrupt_Enable:
-			SET_BIT(USART_CONTROL_REGISTER_B,USART_RECEIVER_INTERRUPT_ENABLE);		//enable	Rx
-			CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_TRASMITTER_INTERRUPT_ENABLE);	//disable	Tx
-			break;
-		case uart_Transmit_Complete_Interrupt_Enable:
-			CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_RECEIVER_INTERRUPT_ENABLE);	//disable	Rx
-			SET_BIT(USART_CONTROL_REGISTER_B,USART_TRASMITTER_INTERRUPT_ENABLE);	//enable	Tx
-			break;
-		case  uart_Tx_and_Rx_Complete_Interrupt_Enable:
-			SET_BIT(USART_CONTROL_REGISTER_B,USART_RECEIVER_INTERRUPT_ENABLE);		//enable	Rx
-			SET_BIT(USART_CONTROL_REGISTER_B,USART_TRASMITTER_INTERRUPT_ENABLE);	//enable	Tx
-			break;
-		default:
-			CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_RECEIVER_INTERRUPT_ENABLE);	//disable	Rx
-			CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_TRASMITTER_INTERRUPT_ENABLE);	//disable	Tx
-	}
-	*/
+	//switch(uart_config_struct.interrupt_mode_select)
+	//{
+		//case uart_Receive_Complete_Interrupt_Enable:
+			//SET_BIT(USART_CONTROL_REGISTER_B,USART_RECEIVER_INTERRUPT_ENABLE);		//enable	Rx
+			//CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_TRASMITTER_INTERRUPT_ENABLE);	//disable	Tx
+			//break;
+		//case uart_Transmit_Complete_Interrupt_Enable:
+			//CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_RECEIVER_INTERRUPT_ENABLE);	//disable	Rx
+			//SET_BIT(USART_CONTROL_REGISTER_B,USART_TRASMITTER_INTERRUPT_ENABLE);	//enable	Tx
+			//break;
+		//case  uart_Tx_and_Rx_Complete_Interrupt_Enable:
+			//SET_BIT(USART_CONTROL_REGISTER_B,USART_RECEIVER_INTERRUPT_ENABLE);		//enable	Rx
+			//SET_BIT(USART_CONTROL_REGISTER_B,USART_TRASMITTER_INTERRUPT_ENABLE);	//enable	Tx
+			//break;
+		//default:
+			//CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_RECEIVER_INTERRUPT_ENABLE);	//disable	Rx
+			//CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_TRASMITTER_INTERRUPT_ENABLE);	//disable	Tx
+	//}
+	
 	return;
 }
 ///////////////////////////////////////////////////////////////
@@ -190,7 +188,7 @@ void USART_Transmit_Complete_Interrupt_Disable(void)
 	CLEAR_BIT(USART_CONTROL_REGISTER_B,USART_TRASMITTER_INTERRUPT_ENABLE);
 }
 ////////////////////////////////////////////////////////////////
-void USART_Transmit_String(char* str)
+void USART_Transmit_String(INT8U* str)
 {
 	while (*str != '\0')
 	{
@@ -200,7 +198,7 @@ void USART_Transmit_String(char* str)
 	return;
 }
 ////////////////////////////////////////////////////////////////
-void USART_Receive_String(char* str )
+void USART_Receive_String(INT8U* str )
 {
 	received_data_struct r;
 	do{
@@ -215,5 +213,16 @@ void USART_Receive_String(char* str )
 		
 	*(--str)='\0';
 	
+	return;
+}
+void USART_Print_Debug_Message(INT8U* fun_name,INT8U* message)
+{
+	USART_Transmit_String(__TIME__);
+	USART_Transmit_String("::<<");
+	USART_Transmit_String(fun_name);
+	USART_Transmit_String(">>::");
+	USART_Transmit_String(message);
+	USART_Transmit_String("..\n\r");
+
 	return;
 }

@@ -165,8 +165,9 @@
 	void USART_Transmit_Complete_Interrupt_Enable(void);
 	void USART_Receive_Complete_Interrupt_Disable(void);
 	void USART_Transmit_Complete_Interrupt_Disable(void);
-	void USART_Transmit_String(char* );
-	void USART_Receive_String(char* );
+	void USART_Transmit_String(INT8U* );
+	void USART_Receive_String(INT8U* );
+	void USART_Print_Debug_Message(INT8U*,INT8U*);
 ////////////////////////////////////////////////////////////////
 
 #endif /* UART_H_ */
