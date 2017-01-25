@@ -8,7 +8,7 @@
 #ifndef UART_H_
 #define UART_H_
 ////////////////////////////////////////////////////////////////	
-	#define DBG_MODE 0
+	#define DBG_MODE 1
 	#if	DBG_MODE >0
 	#define DBG		USART_DBG_Trace_Control_Flow((INT8U*)__FUNCTION__)
 	#else
