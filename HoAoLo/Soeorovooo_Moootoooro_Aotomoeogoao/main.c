@@ -21,8 +21,9 @@ int main(void)
 	usart_config_struct.operation_mode = asynch_normal;
 	usart_config_struct.interrupt_mode_select = uart_Tx_and_Rx_Complete_Interrupt_Enable;
 	USART_Init(usart_config_struct);
+		
+	USART_Print_Debug_Message((INT8U*)__FUNCTION__,"debug message");
 	
-	USART_Transmit_String("Mohanad says Hello !\n\r");
 	while(1)
 	{
 		Servo_Motor_Get_Angle_From_Uart();
