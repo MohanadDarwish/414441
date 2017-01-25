@@ -215,14 +215,24 @@ void USART_Receive_String(INT8U* str )
 	
 	return;
 }
-void USART_Print_Debug_Message(INT8U* fun_name,INT8U* message)
+void USART_DBG_Print_Debug_Message(INT8U* fun_name,INT8U* message)
 {
+	USART_Transmit_String("#_DBG_#/");
 	USART_Transmit_String(__TIME__);
-	USART_Transmit_String("::<<");
+	USART_Transmit_String("/::<<");
 	USART_Transmit_String(fun_name);
-	USART_Transmit_String(">>::");
+	USART_Transmit_String("()>>::\"");
 	USART_Transmit_String(message);
-	USART_Transmit_String("..\n\r");
-
+	USART_Transmit_String("\"\n\r");
 	return;
+}
+
+void USART_DBG_Trace_Control_Flow(INT8U* fun_name){
+
+	USART_Transmit_String("#_DBG_#/");
+	USART_Transmit_String(__TIME__);
+	USART_Transmit_String("/::<<");
+	USART_Transmit_String(fun_name);
+	USART_Transmit_String("()>>");
+	USART_Transmit_String("...\n\r");
 }
